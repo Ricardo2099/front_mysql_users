@@ -1,75 +1,31 @@
-// GET request - Obtener todos los usuarios
-function fetchUsers() {
-    fetch('http://localhost:8080/api/users')  // Cambia localhost a la URL del servidor remoto si es necesario
-        .then(response => response.json())
-        .then(data => {
-            const usersDiv = document.getElementById('users');
-            usersDiv.innerHTML = "";  // Limpiar el contenido previo
 
-            data.forEach(user => {
-                const userDiv = document.createElement('div');
-                userDiv.innerHTML = `
-                    <p><strong>${user.name}</strong> - ${user.email} - ${user.age} años - ${user.comments}</p>
-                    <button onclick="deleteUser(${user.id})">Eliminar</button>
-                `;
-                usersDiv.appendChild(userDiv);
-            });
-        })
-        .catch(error => {
-            console.log('Error al obtener los usuarios:', error);
-        });
+// callrestapi.js
+const API_BASE = 'https://mysql-restapi-wjqc.onrender.com/api/users';
+
+async function fetchUsers() {
+  const res = await fetch(API_BASE);
+  const users = await res.json();
+  // … pinta la lista en la página …
 }
 
-// POST request - Agregar un nuevo usuario
-function addUser(event) {
-    event.preventDefault();  // Evitar que el formulario se envíe por defecto
-
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const age = document.getElementById('age').value;
-    const comments = document.getElementById('comments').value;
-
-    const userData = {
-        name: name,
-        email: email,
-        age: age,
-        comments: comments
-    };
-
-    fetch('http://localhost:8080/api/users', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Usuario agregado:', data);
-        fetchUsers();  // Actualizar la lista de usuarios después de agregar uno nuevo
-    })
-    .catch(error => {
-        console.log('Error al agregar el usuario:', error);
-    });
+async function addUser(user) {
+  const res = await fetch(API_BASE, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(user),
+  });
+  return await res.json();
 }
 
-// DELETE request - Eliminar un usuario
-function deleteUser(userId) {
-    fetch(`http://localhost:8080/api/users/${userId}`, {
-        method: 'DELETE'
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Usuario eliminado:', data);
-        fetchUsers();  // Actualizar la lista de usuarios después de eliminar uno
-    })
-    .catch(error => {
-        console.log('Error al eliminar el usuario:', error);
-    });
-}
-
-// Llamar a fetchUsers al cargar la página para mostrar los usuarios existentes
-window.onload = fetchUsers;
-
-// Agregar el evento al formulario de agregar usuario
-document.getElementById('userForm').addEventListener('submit', addUser);
+// Ejemplo de hook al formulario:
+document.getElementById('userForm').onsubmit = async e => {
+  e.preventDefault();
+  const user = {
+    name:  e.target.name.value,
+    email: e.target.email.value,
+    age:   Number(e.target.age.value),
+    comments: e.target.comments.value
+  };
+  await addUser(user);
+  await fetchUsers();
+};

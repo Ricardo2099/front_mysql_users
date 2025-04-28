@@ -4,5 +4,5 @@ FROM nginx:alpine
 # Copiar los archivos del frontend al contenedor
 COPY . /usr/share/nginx/html
 
-# Exponer el puerto 80
+# Exponer el puerto 80 para que sea accesible
 EXPOSE 80

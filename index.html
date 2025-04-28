@@ -22,10 +22,9 @@
   <!-- LISTADO DINÁMICO -->
   <ul id="userList"></ul>
 
-  <!-- Tu script de API -->
+  <!-- Cargar callrestapi.js como módulo -->
   <script src="callrestapi.js" type="module"></script>
   <script>
-    // Asegúrate de que callrestapi.js exponga getUsers, createUser y deleteUser
     const loadBtn   = document.getElementById('btnLoad');
     const listEl    = document.getElementById('userList');
     const userForm  = document.getElementById('userForm');

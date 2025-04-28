@@ -1,6 +1,5 @@
 // URL base de tu API, configurable por variable de entorno si quieres
-const API_BASE = window.__API_URL__ ||
-  'https://mysql-restapi-wjqc.onrender.com/api/users';
+const API_BASE = window.__API_URL__ || 'https://mysql-restapi-wjqc.onrender.com/api/users';
 
 // obtiene todos
 export async function getUsers() {

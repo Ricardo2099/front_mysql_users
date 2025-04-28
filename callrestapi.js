@@ -1,37 +1,53 @@
-// URL base de tu API, configurable por variable de entorno si quieres
-const API_BASE = window.__API_URL__ || 'https://mysql-restapi-wjqc.onrender.com/api/users';
+// Cambia esta URL a la que tengas de tu backend desplegado en Render
+const API_URL = "https://mysql-restapi-wjqc.onrender.com/api/users";
 
-// obtiene todos
-export async function getUsers() {
-  try {
-    const res = await fetch(API_BASE);
-    return res.json();
-  } catch (error) {
-    console.error('Error al obtener los usuarios:', error);
+// Función para obtener usuarios
+async function getUsers() {
+  const response = await fetch(API_URL);
+  const users = await response.json();
+  const list = document.getElementById("userList");
+  list.innerHTML = "";
+  users.forEach(user => {
+    const li = document.createElement("li");
+    li.innerHTML = `${user.name} - ${user.email} - ${user.age} años - ${user.comments} 
+      <button onclick="deleteUser(${user.id})">Eliminar</button>`;
+    list.appendChild(li);
+  });
+}
+
+// Función para crear usuario
+async function createUser() {
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const age = parseInt(document.getElementById("age").value);
+  const comments = document.getElementById("comments").value;
+
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ name, email, age, comments })
+  });
+
+  if (response.ok) {
+    alert("Usuario creado exitosamente!");
+    getUsers();
+  } else {
+    alert("Error creando usuario.");
   }
 }
 
-// crea uno
-export async function createUser(user) {
-  try {
-    const res = await fetch(API_BASE, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(user),
-    });
-    return res.json();
-  } catch (error) {
-    console.error('Error al crear el usuario:', error);
+// Función para eliminar usuario
+async function deleteUser(id) {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "DELETE"
+  });
+
+  if (response.ok) {
+    alert("Usuario eliminado exitosamente!");
+    getUsers(); // Recarga la lista
+  } else {
+    alert("Error eliminando usuario.");
   }
 }
-
-// borra por id
-export async function deleteUser(id) {
-  try {
-    const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
-    return res.ok;
-  } catch (error) {
-    console.error('Error al eliminar el usuario:', error);
-  }
-}
-

@@ -1,31 +1,25 @@
+// URL base de tu API, configurable por variable de entorno si quieres
+const API_BASE = window.__API_URL__ ||
+  'https://mysql-restapi-wjqc.onrender.com/api/users';
 
-// callrestapi.js
-const API_BASE = 'https://mysql-restapi-wjqc.onrender.com/api/users';
-
-async function fetchUsers() {
+// obtiene todos
+export async function getUsers() {
   const res = await fetch(API_BASE);
-  const users = await res.json();
-  // … pinta la lista en la página …
+  return res.json();
 }
 
-async function addUser(user) {
+// crea uno
+export async function createUser(user) {
   const res = await fetch(API_BASE, {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(user),
+    body: JSON.stringify(user)
   });
-  return await res.json();
+  return res.json();
 }
 
-// Ejemplo de hook al formulario:
-document.getElementById('userForm').onsubmit = async e => {
-  e.preventDefault();
-  const user = {
-    name:  e.target.name.value,
-    email: e.target.email.value,
-    age:   Number(e.target.age.value),
-    comments: e.target.comments.value
-  };
-  await addUser(user);
-  await fetchUsers();
-};
+// borra por id
+export async function deleteUser(id) {
+  const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
+  return res.ok;
+}
